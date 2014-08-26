@@ -1,0 +1,21 @@
+{
+  "name": "vz.machine",
+  "version": "1.0.0",
+  "description": "Evented finite state machines",
+  "main": "main.js",
+  "dependencies": {
+    "vz.property": "",
+    "vz.next-tick": "",
+    "vz.collection": "",
+    "vz.constants": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/manvalls/vz.machine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/manvalls/vz.machine/issues"
+  },
+  "author": "Manuel Valls Fernández <manolo@chatiku.com>",
+  "license": "LGPL-3.0"
+}
