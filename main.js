@@ -11,6 +11,7 @@ var Machine,
     numberOfListeners = new Property(),
     
     event = new Property(),
+    actualEvent = new Property(),
     listener = new Property(),
     
     RE = /^([^:]*)(:(.*))?$/,
@@ -29,15 +30,18 @@ module.exports = Machine = function(){
 function clear(that){
   event.of(that).value = null;
   listener.of(that).value = null;
+  actualEvent.of(that).value = null;
 }
 
-function listenerCaller(lis,args,that,e){
+function listenerCaller(lis,args,that,e,actual){
   var ret;
   
   nextTick(clear,[that]);
   
   event.of(that).value = e;
   listener.of(that).value = lis;
+  actualEvent.of(that).value = actual;
+  
   ret = lis.apply(that,args);
   clear(that);
   
@@ -49,6 +53,7 @@ propertiesBag = {
     var i,j,
         _events = [],
         _listeners = [],
+        collection = new Collection(),
         listener,
         event;
     
@@ -72,15 +77,19 @@ propertiesBag = {
         
         if(!numberOfListeners.of(this).value[event]){
           numberOfListeners.of(this).value[event] = 1;
-          this.fire('event-listened',event);
+          collection.add(this.fire,[event + '-listened'],this);
         }else numberOfListeners.of(this).value[event]++;
       }
     }
     
+    collection = collection.resolve();
+    for(i = 0;i < collection.length;i++) collection[i].resolve();
+    
     return this;
   }},
   fire: {value: function(){
-    var event = arguments[0],
+    var e0 = arguments[0].replace(/:/g,''),
+        event = e0,
         lis,
         i,
         collection = new Collection(),
@@ -91,13 +100,13 @@ propertiesBag = {
     if(event != 'everything'){
       
       if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
-        collection.add(listenerCaller,[lis[i],args,this,arguments[0]]);
+        collection.add(listenerCaller,[lis[i],args,this,e0,event]);
       }
       
       event += ':' + this.state;
       
       if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
-        collection.add(listenerCaller,[lis[i],args,this,arguments[0]]);
+        collection.add(listenerCaller,[lis[i],args,this,e0,event]);
       }
       
       event = 'everything';
@@ -105,13 +114,13 @@ propertiesBag = {
     }
     
     if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
-      collection.add(listenerCaller,[lis[i],args,this,arguments[0]]);
+      collection.add(listenerCaller,[lis[i],args,this,e0,event]);
     }
     
     event += ':' + this.state;
     
     if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
-      collection.add(listenerCaller,[lis[i],args,this,arguments[0]]);
+      collection.add(listenerCaller,[lis[i],args,this,e0,event]);
     }
     
     nextTick(collection.resolve,[],collection);
@@ -122,11 +131,12 @@ propertiesBag = {
     var _events = [],
         _event,
         _listeners = [],
+        collection = new Collection(),
         lis,
         keys,
         i,j,k;
     
-    if(!arguments.length) return this.detach(this.event,this.listener);
+    if(!arguments.length) return this.detach(this.actualEvent,this.listener);
     
     for(i = 0;typeof arguments[i] == 'string';i++) _events.push(arguments[i]);
     for(;i < arguments.length;i++) _listeners.push(arguments[i]);
@@ -144,7 +154,7 @@ propertiesBag = {
               numberOfListeners.of(this).value[_event]--;
               if(!numberOfListeners.of(this).value[_event]){
                 delete numberOfListeners.of(this).value[_event];
-                this.fire('event-ignored',_event);
+                collection.add(this.fire,[_event + '-ignored'],this);
               }
             }
           }
@@ -156,7 +166,7 @@ propertiesBag = {
         numberOfListeners.of(this).value[_event]--;
         if(!numberOfListeners.of(this).value[_event]){
           delete numberOfListeners.of(this).value[_event];
-          this.fire('event-ignored',_event);
+          collection.add(this.fire,[_event + '-ignored'],this);
         }
       }
     }else if(_listeners.length){
@@ -167,17 +177,27 @@ propertiesBag = {
       }
     }
     
+    collection = collection.resolve();
+    for(i = 0;i < collection.length;i++) collection[i].resolve();
+    
     return this;
   }},
   
   eventListened: {
     value: function(event){
+      event = event.replace(/:/g,'');
       return !!numberOfListeners.of(this).value[event];
     }
   },
   event: {
     get: function(){
       return event.of(this).value;
+    },
+    set: constants.NOOP
+  },
+  actualEvent: {
+    get: function(){
+      return actualEvent.of(this).value;
     },
     set: constants.NOOP
   },
@@ -196,11 +216,11 @@ propertiesBag = {
       
       st1 = (st1 || '').toString();
       
-      this.fire(st0 + '->' + st1);
-      this.fire(st0 + ' end',st1);
-      this.fire(st1 + ' start',st0);
-      
       state.of(this).value = st1;
+      
+      this.fire(st0 + '->' + st1).resolve();
+      this.fire(st0 + ' end',st1).resolve();
+      this.fire(st1 + ' start',st0).resolve();
     }
   }
 };
