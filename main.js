@@ -78,6 +78,7 @@ propertiesBag = {
         if(!numberOfListeners.of(this).value[event]){
           numberOfListeners.of(this).value[event] = 1;
           collection.add(this.fire,[event + '-listened'],this);
+          collection.add(this.fire,['listened-event',event],this);
         }else numberOfListeners.of(this).value[event]++;
       }
     }
@@ -155,6 +156,7 @@ propertiesBag = {
               if(!numberOfListeners.of(this).value[_event]){
                 delete numberOfListeners.of(this).value[_event];
                 collection.add(this.fire,[_event + '-ignored'],this);
+                collection.add(this.fire,['ignored-event',_event],this);
               }
             }
           }
@@ -167,6 +169,7 @@ propertiesBag = {
         if(!numberOfListeners.of(this).value[_event]){
           delete numberOfListeners.of(this).value[_event];
           collection.add(this.fire,[_event + '-ignored'],this);
+          collection.add(this.fire,['ignored-event',_event],this);
         }
       }
     }else if(_listeners.length){

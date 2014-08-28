@@ -35,7 +35,7 @@ Lets an arbitrary object to behave like a Machine, without touching its prototyp
 
 Adds all specified callbacks to the machine. These callbacks will be executed when any of the specified events happen. Events are strings having one of two patterns: '*event*:*state*', which will be triggered when *event* is fired while being in the *state* state, or '*event*', which will be triggered when *event* is fired, independently of the state of the machine.
 
-As a result of this call, the '*event*-listened' event will be called and resolved immediately if one or more of the new events being listened for were not previously in said state.
+As a result of this call, the '*event*-listened' event will be called and resolved immediately if one or more of the new events being listened for were not previously in said state. 'listened-event', receiving as only argument *event*, will also be called.
 
 **Note:** a callback may only be added once to a particular event
 
@@ -52,7 +52,7 @@ This will execute callbacks associated with '*event*', '*event*:*state*', 'every
 Removes callbacks from the machine. If one or more events are specified, and one or more callbacks are specified too, said callbacks will be removed from said events. If one or more events are specified, but no callbacks are, all callbacks will be removed from said events. If one or more callbacks are specified, but no events are, said callbacks
 will be removed from all events. If neither events nor callbacks are specified, the current callback being executed, if any, will be removed from the current event being processed, if any.
 
-Analogously with Machine.on, this function will call and resolve immediately the '*event*-ignored' event if one or more of the specified events are left without callbacks as the result of this operation.
+Analogously with Machine.on, this function will call and resolve immediately the '*event*-ignored' event if one or more of the specified events are left without callbacks as the result of this operation. 'ignored-event', receiving as only argument *event*, will also be called.
 
 #### Machine.eventListened(event)
 
