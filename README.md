@@ -27,7 +27,7 @@ turnstile.fire('push'); // locked again
 
 Creates and initializes a Machine object.
 
-#### static Machine.mechanize(object)
+#### static Machine.mechanize(object[,dontInitialize])
 
 Lets an arbitrary object to behave like a Machine, without touching its prototype.
 

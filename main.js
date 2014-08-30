@@ -228,8 +228,9 @@ propertiesBag = {
   }
 };
 
-Machine.mechanize = function(object){
+Machine.mechanize = function(object,dontInitialize){
   Object.defineProperties(object,propertiesBag);
+  if(dontInitialize) return;
   Machine.call(object);
 };
 
