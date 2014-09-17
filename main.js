@@ -18,7 +18,9 @@ var Machine,
     
     propertiesBag;
 
-module.exports = Machine = function(){
+module.exports = Machine = function(dontInitialize){
+  if(dontInitialize) return;
+  
   state.of(this).value = '';
   event.of(this).value = null;
   listener.of(this).value = null;

@@ -25,9 +25,9 @@ turnstile.fire('push'); // locked again
 
 ### Machine object
 
-#### Constructor()
+#### Constructor([dontInitialize])
 
-Creates and initializes a Machine object.
+Creates and initializes a Machine object. If *dontInitialize* evaluates to true, the machine isn't initialized and may be initialized later by calling `Machine.call(obj);`.
 
 #### static Machine.mechanize(object[,dontInitialize])
 
