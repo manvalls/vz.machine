@@ -10,9 +10,9 @@ var Machine,
     listeners = new Property(),
     numberOfListeners = new Property(),
     
-    event = new Property(),
-    actualEvent = new Property(),
-    listener = new Property(),
+    event = [],
+    actualEvent = [],
+    listener = [],
     
     RE = /^([^:]*)(:(.*))?$/,
     
@@ -22,30 +22,30 @@ module.exports = Machine = function(dontInitialize){
   if(dontInitialize) return;
   
   state.of(this).value = '';
-  event.of(this).value = null;
-  listener.of(this).value = null;
-  
   listeners.of(this).value = {};
   numberOfListeners.of(this).value = {};
 };
 
-function clear(that){
-  event.of(that).value = null;
-  listener.of(that).value = null;
-  actualEvent.of(that).value = null;
+function clear(){
+  event.splice(0);
+  listener.splice(0);
+  actualEvent.splice(0);
 }
 
 function listenerCaller(lis,args,that,e,actual){
   var ret;
   
-  nextTick(clear,[that]);
+  nextTick(clear);
   
-  event.of(that).value = e;
-  listener.of(that).value = lis;
-  actualEvent.of(that).value = actual;
+  event.push(e);
+  listener.push(lis);
+  actualEvent.push(actual);
   
   ret = lis.apply(that,args);
-  clear(that);
+  
+  event.pop();
+  listener.pop();
+  actualEvent.pop();
   
   return ret;
 }
@@ -91,25 +91,38 @@ propertiesBag = {
     return this;
   }},
   fire: {value: function(){
-    var e0 = arguments[0].replace(/:/g,''),
-        event = e0,
+    var e0,
+        event,
         lis,
         i,
         collection = new Collection(),
-        args = [];
+        args = [],
+        that;
     
-    for(i = 1;i < arguments.length;i++) args.push(arguments[i]);
+    if(typeof arguments[0] == 'string'){
+      e0 = arguments[0].replace(/:/g,'');
+      event = e0;
+      that = this;
+      i = 1;
+    }else{
+      e0 = arguments[1].replace(/:/g,'');
+      event = e0;
+      that = arguments[0];
+      i = 2;
+    }
+    
+    for(;i < arguments.length;i++) args.push(arguments[i]);
     
     if(event != 'everything'){
       
       if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
-        collection.add(listenerCaller,[lis[i],args,this,e0,event]);
+        collection.add(listenerCaller,[lis[i],args,that,e0,event]);
       }
       
       event += ':' + this.state;
       
       if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
-        collection.add(listenerCaller,[lis[i],args,this,e0,event]);
+        collection.add(listenerCaller,[lis[i],args,that,e0,event]);
       }
       
       event = 'everything';
@@ -117,13 +130,13 @@ propertiesBag = {
     }
     
     if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
-      collection.add(listenerCaller,[lis[i],args,this,e0,event]);
+      collection.add(listenerCaller,[lis[i],args,that,e0,event]);
     }
     
     event += ':' + this.state;
     
     if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
-      collection.add(listenerCaller,[lis[i],args,this,e0,event]);
+      collection.add(listenerCaller,[lis[i],args,that,e0,event]);
     }
     
     nextTick(collection.resolve,[],collection);
@@ -194,24 +207,26 @@ propertiesBag = {
       return !!numberOfListeners.of(this).value[event];
     }
   },
+  
   event: {
     get: function(){
-      return event.of(this).value;
+      return event[event.length - 1];
     },
     set: constants.NOOP
   },
   actualEvent: {
     get: function(){
-      return actualEvent.of(this).value;
+      return actualEvent[actualEvent.length - 1];
     },
     set: constants.NOOP
   },
   listener: {
     get: function(){
-      return listener.of(this).value;
+      return listener[listener.length - 1];
     },
     set: constants.NOOP
   },
+  
   state: {
     get: function(){
       return state.of(this).value;
