@@ -223,6 +223,7 @@ propertiesBag = {
       
       state.of(this).value = st1;
       
+      this.fire('new-state',st1).resolve();
       this.fire(st0 + '->' + st1).resolve();
       this.fire(st0 + ' end',st1).resolve();
       this.fire(st1 + ' start',st0).resolve();

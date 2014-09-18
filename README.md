@@ -78,6 +78,7 @@ If there's a callback currently running, this represents said callback.
 
 The state of the machine. It defaults to ''. When changed it fires and resolves the following events in the following order:
 
+* 'new-state', with *new state* as the only argument
 * '*previous state*->*new state*', with no arguments
 * '*previous state* end', with *new state* as the only argument
 * '*new state* start', with *old state* as the only argument
