@@ -1,6 +1,6 @@
 {
   "name": "vz.machine",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Evented finite state machines",
   "main": "main.js",
   "dependencies": {
