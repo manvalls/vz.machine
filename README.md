@@ -42,6 +42,7 @@ As a result of this call, the '*event*-listened' event will be called and resolv
 **Note:** a callback may only be added once to a particular event
 
 #### Machine.fire([thisArg,]event[,argument1,argument2,...])
+#### Machine.fireArray([thisArg,]event,arguments)
 
 Adds the callbacks associated with an event to a new [Collection](https://www.npmjs.org/package/vz.collection "vz.collection") which will be resolved asynchronously unless said collection, returned as the result of this call, is resolved outside of the function.
 

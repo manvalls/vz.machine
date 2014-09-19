@@ -90,38 +90,31 @@ propertiesBag = {
     
     return this;
   }},
-  fire: {value: function(){
+  
+  fireArray: {value: function(that,event,args){
     var e0,
-        event,
         lis,
         i,
-        collection = new Collection(),
-        args = [],
-        that;
+        collection = new Collection();
     
-    if(typeof arguments[0] == 'string'){
-      e0 = arguments[0].replace(/:/g,'');
-      event = e0;
+    if(!args){
+      args = event;
+      event = that;
       that = this;
-      i = 1;
-    }else{
-      e0 = arguments[1].replace(/:/g,'');
-      event = e0;
-      that = arguments[0];
-      i = 2;
     }
     
-    for(;i < arguments.length;i++) args.push(arguments[i]);
+    event = event.replace(/:/g,'');
+    e0 = event;
     
     if(event != 'everything'){
       
-      if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
+      if(lis = listeners.get(this)[event]) for(i = 0;i < lis.length;i++){
         collection.add(listenerCaller,[lis[i],args,that,e0,event]);
       }
       
       event += ':' + this.state;
       
-      if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
+      if(lis = listeners.get(this)[event]) for(i = 0;i < lis.length;i++){
         collection.add(listenerCaller,[lis[i],args,that,e0,event]);
       }
       
@@ -129,13 +122,13 @@ propertiesBag = {
       
     }
     
-    if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
+    if(lis = listeners.get(this)[event]) for(i = 0;i < lis.length;i++){
       collection.add(listenerCaller,[lis[i],args,that,e0,event]);
     }
     
     event += ':' + this.state;
     
-    if(lis = listeners.of(this).value[event]) for(i = 0;i < lis.length;i++){
+    if(lis = listeners.get(this)[event]) for(i = 0;i < lis.length;i++){
       collection.add(listenerCaller,[lis[i],args,that,e0,event]);
     }
     
@@ -143,6 +136,27 @@ propertiesBag = {
     
     return collection;
   }},
+  fire: {value: function(){
+    var event,
+        args = [],
+        that,
+        i;
+    
+    if(typeof arguments[0] == 'string'){
+      event = arguments[0];
+      that = this;
+      i = 1;
+    }else{
+      event = arguments[1];
+      that = arguments[0];
+      i = 2;
+    }
+    
+    for(;i < arguments.length;i++) args.push(arguments[i]);
+    
+    return this.fireArray(that,event,args);
+  }},
+  
   detach: {value: function(){
     var _events = [],
         _event,
