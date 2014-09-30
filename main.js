@@ -91,11 +91,18 @@ propertiesBag = {
     return this;
   }},
   
-  fireArray: {value: function(that,event,args){
+  fireArray: {value: function(execute,that,event,args){
     var e0,
         lis,
         i,
         collection = new Collection();
+    
+    if(typeof execute != 'boolean'){
+      args = event;
+      event = that;
+      that = execute;
+      execute = true;
+    }
     
     if(!args){
       args = event;
@@ -132,7 +139,7 @@ propertiesBag = {
       collection.add(listenerCaller,[lis[i],args,that,e0,event]);
     }
     
-    nextTick(collection.resolve,[],collection);
+    if(execute) nextTick(collection.resolve,[],collection);
     
     return collection;
   }},
@@ -140,21 +147,27 @@ propertiesBag = {
     var event,
         args = [],
         that,
-        i;
+        execute,
+        i = 0;
     
-    if(typeof arguments[0] == 'string'){
-      event = arguments[0];
+    if(typeof arguments[i] == 'boolean'){
+      execute = arguments[i];
+      i++;
+    }else execute = true;
+    
+    if(typeof arguments[i] == 'string'){
+      event = arguments[i];
       that = this;
-      i = 1;
+      i++;
     }else{
-      event = arguments[1];
-      that = arguments[0];
-      i = 2;
+      event = arguments[i + 1];
+      that = arguments[i];
+      i += 2;
     }
     
     for(;i < arguments.length;i++) args.push(arguments[i]);
     
-    return this.fireArray(that,event,args);
+    return this.fireArray(execute,that,event,args);
   }},
   
   detach: {value: function(){
