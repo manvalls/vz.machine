@@ -139,7 +139,7 @@ propertiesBag = {
       collection.add(listenerCaller,[lis[i],args,that,e0,event]);
     }
     
-    if(execute) nextTick(collection.resolve,[],collection);
+    if(execute) nextTick(collection);
     
     return collection;
   }},
