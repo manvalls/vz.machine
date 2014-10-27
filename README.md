@@ -1,3 +1,5 @@
+**DEPRECATED in favour of [vse](https://www.npmjs.org/package/vse)**
+
 [![NPM](https://nodei.co/npm/vz.machine.png?downloads=true)](https://nodei.co/npm/vz.machine/)
 
 This package uses or may use at some point in the future ECMAScript 6 features. Use it on a compatible environment or transpile it with Traceur, Closure Compiler, es6-transpiler or equivalent. Please note that some of these have flaws and bugs, test your code carefully until you find a suitable tool for your task.
